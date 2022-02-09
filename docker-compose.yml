@@ -1,0 +1,83 @@
+version: "3"
+
+volumes:
+  nextcloud:
+  db:
+  nginxfornextcloud:
+  redis:
+  phpmyadmin:
+
+services:
+  db:
+    container_name: db
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - db:/var/lib/mysql
+      - ./dockerfiles/db/sqls:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ROOT_PASSWORD=
+    env_file:
+      - ./dockerfiles/nextcloud/db.env
+    image: mariadb:10.5
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+
+  redis:
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - ./dockerfiles/redis-catch:/data
+    image: redis
+  
+  nextcloud:
+    container_name: nextcloud
+    restart: always
+    volumes:
+      - ./dockerfiles/nextcloud/html:/var/www/html
+      - Z:\_Cloudd:/var/www/html/data
+    environment:
+      - MYSQL_HOST=db
+      - REDIS_HOST=redis
+      - NEXTCLOUD_TRUSTED_DOMAINS=
+    env_file:
+      - ./dockerfiles/nextcloud/db.env
+    links:
+      - db
+    depends_on:
+      - db
+      - redis
+    image: "nextcloud:fpm"
+
+  nginx:
+    container_name: nginxfornextcloud
+    restart: always
+    ports:
+      - 8082:80
+      - 4432:443
+    volumes:
+      - ./dockerfiles/nextcloud/html:/var/www/html
+      - Z:\_Cloudd:/var/www/html/data
+      - ./dockerfiles/nginx/conf.d:/etc/nginx/conf.d
+      - ./dockerfiles/nginx/ssl_certs:/etc/nginx/ssl_certs
+    links:
+      - db
+      - nextcloud:nextcloud
+    depends_on:
+      - nextcloud
+    image: nginx
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - 8083:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db

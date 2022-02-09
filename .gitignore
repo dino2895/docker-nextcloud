@@ -1,0 +1,7 @@
+*.bat
+*.py
+dockerfiles/db/sqls/*.*
+dockerfiles/nextcloud/html/*.*
+dockerfiles/nextcloud/html/*/
+dockerfiles/ssl_certs/*.*
+dockerfiles/redis-catch/*.*
