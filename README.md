@@ -1,4 +1,27 @@
 # Docker Nextcloud
+## Directory Structure
+```
+│  .gitignore
+│  docker-compose.yml
+│  README.md
+│
+└─dockerfiles
+    ├─db
+    │  └─sqls
+    ├─nextcloud
+    │  │  db.env
+    │  │
+    │  └─html
+    ├─nginx
+    │  ├─conf.d
+    │  │      default.conf
+    │  │
+    │  └─ssl_certs
+    │          {cert_name}.key
+    │          {cert_name}.pem
+    │
+    └─redis-catch
+```
 ## Sitting
 - docker-compose.yml
 ```
