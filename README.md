@@ -22,7 +22,11 @@
     │
     └─redis-catch
 ```
-## Sitting
+### create directory
+```
+sh dirscript.sh
+```
+## Setting
 - docker-compose.yml
 ```
 services:
