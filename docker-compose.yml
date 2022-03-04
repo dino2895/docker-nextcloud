@@ -4,7 +4,6 @@ volumes:
   nextcloud:
   db:
   nginxfornextcloud:
-  redis:
   phpmyadmin:
 
 services:
@@ -18,49 +17,38 @@ services:
       - ./dockerfiles/db/sqls:/docker-entrypoint-initdb.d
     environment:
       - MYSQL_ROOT_USER=root
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_PASSWORD=Skills39
     env_file:
       - ./dockerfiles/nextcloud/db.env
     image: mariadb:10.5
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
 
-  redis:
-    container_name: redis
-    restart: always
-    ports:
-      - 6379:6379
-    volumes:
-      - ./dockerfiles/redis-catch:/data
-    image: redis
-  
   nextcloud:
     container_name: nextcloud
     restart: always
     volumes:
       - ./dockerfiles/nextcloud/html:/var/www/html
-      - Z:\_Cloudd:/var/www/html/data
+      - /mnt/data:/var/www/html/data
     environment:
       - MYSQL_HOST=db
-      - REDIS_HOST=redis
-      - NEXTCLOUD_TRUSTED_DOMAINS=
+      - NEXTCLOUD_TRUSTED_DOMAINS=scloud.brlin.org
     env_file:
       - ./dockerfiles/nextcloud/db.env
     links:
       - db
     depends_on:
       - db
-      - redis
     image: "nextcloud:fpm"
 
   nginx:
     container_name: nginxfornextcloud
     restart: always
     ports:
-      - 8082:80
-      - 4432:443
+      - 80:80
+      - 443:443
     volumes:
       - ./dockerfiles/nextcloud/html:/var/www/html
-      - Z:\_Cloudd:/var/www/html/data
+      - /mnt/data:/var/www/html/data
       - ./dockerfiles/nginx/conf.d:/etc/nginx/conf.d
       - ./dockerfiles/nginx/ssl_certs:/etc/nginx/ssl_certs
     links:
