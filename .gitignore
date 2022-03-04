@@ -5,3 +5,9 @@ dockerfiles/nextcloud/html/*.*
 dockerfiles/nextcloud/html/*/
 dockerfiles/ssl_certs/*.*
 dockerfiles/redis-catch/*.*
+dockerfiles/nextcloud/html/AUTHORS
+dockerfiles/nginx/ssl_certs/scloud.brlin.org.key
+dockerfiles/nginx/ssl_certs/scloud.brlin.org.crt
+dockerfiles/nextcloud/html/occ
+dockerfiles/nextcloud/html/COPYING
+.gitignore
